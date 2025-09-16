@@ -83,7 +83,8 @@ export interface Timetable {
 export interface LeaveRequest {
   id: string;
   facultyId: string;
-  date: Date;
+  startDate: Date;
+  endDate: Date;
   reason: string;
   status: 'pending' | 'approved' | 'rejected';
   substituteId?: string;

@@ -20,11 +20,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { format, addDays, startOfWeek } from 'date-fns';
+import { LeaveRequestDialog } from './LeaveRequestDialog';
 
 export function FacultyDashboard() {
   const { user } = useAuthStore();
   const { subjects, classrooms, faculties } = useAppStore();
   const [selectedWeek, setSelectedWeek] = useState(startOfWeek(new Date()));
+  const [leaveDialogOpen, setLeaveDialogOpen] = useState(false);
 
   const faculty = faculties.find(f => f.email === user?.email);
 
@@ -170,7 +172,11 @@ export function FacultyDashboard() {
           <p className="text-muted-foreground">Here's your teaching schedule and upcoming classes</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setLeaveDialogOpen(true)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Request Leave
           </Button>
@@ -397,6 +403,11 @@ export function FacultyDashboard() {
           </Card>
         </motion.div>
       </div>
+
+      <LeaveRequestDialog 
+        open={leaveDialogOpen} 
+        onOpenChange={setLeaveDialogOpen} 
+      />
     </motion.div>
   );
 }
