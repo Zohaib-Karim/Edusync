@@ -38,6 +38,7 @@ interface AppState {
   updateTimetable: (id: string, entries: TimetableEntry[]) => void;
   addLeaveRequest: (request: LeaveRequest) => void;
   markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
   addEvent: (event: Event) => void;
   loadAnalytics: () => Promise<void>;
 }
@@ -258,6 +259,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       notifications: state.notifications.map(n => 
         n.id === id ? { ...n, read: true } : n
       )
+    })),
+  
+  markAllNotificationsAsRead: () => 
+    set((state) => ({
+      notifications: state.notifications.map(n => ({ ...n, read: true }))
     })),
   
   addEvent: (event) => 

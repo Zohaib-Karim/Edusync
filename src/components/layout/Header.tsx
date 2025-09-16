@@ -37,7 +37,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export function Header() {
   const { user, logout } = useAuthStore();
-  const { notifications, markNotificationAsRead } = useAppStore();
+  const { notifications, markNotificationAsRead, markAllNotificationsAsRead } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const unreadNotifications = notifications.filter(n => !n.read);
@@ -103,10 +103,24 @@ export function Header() {
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
               <div className="p-4 border-b">
-                <h3 className="font-semibold">Notifications</h3>
-                <p className="text-sm text-muted-foreground">
-                  {unreadNotifications.length} unread messages
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold">Notifications</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {unreadNotifications.length} unread messages
+                    </p>
+                  </div>
+                  {unreadNotifications.length > 0 && (
+                    <Button
+                      variant="ghost" 
+                      size="sm"
+                      onClick={markAllNotificationsAsRead}
+                      className="text-xs"
+                    >
+                      Mark all read
+                    </Button>
+                  )}
+                </div>
               </div>
               <ScrollArea className="h-80">
                 <div className="p-2">
