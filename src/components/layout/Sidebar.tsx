@@ -189,7 +189,6 @@ export function AppSidebar() {
             </div>
           </motion.div>
         )}
-        <SidebarTrigger className="ml-auto" />
       </div>
 
       <SidebarContent className="p-2">

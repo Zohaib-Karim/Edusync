@@ -8,7 +8,8 @@ import {
   Settings,
   ChevronDown,
   Calendar,
-  Clock
+  Clock,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/enhanced-button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { Badge } from '@/components/ui/badge';
@@ -65,8 +67,12 @@ export function Header() {
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between px-6 h-full">
+        {/* Sidebar Toggle - Always Visible */}
+        <div className="flex items-center gap-4">
+          <SidebarTrigger />
+        </div>
         {/* Search */}
-        <div className="flex-1 max-w-md">
+        <div className="flex-1 max-w-md ml-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
