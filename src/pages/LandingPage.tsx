@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { 
@@ -96,9 +97,25 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden relative">
+      {/* Header with Theme Toggle */}
+      <motion.div 
+        className="fixed top-4 right-4 z-50"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="glass backdrop-blur-xl border border-border/20 hover:border-border/40 rounded-full p-1 transition-all duration-300"
+        >
+          <ThemeToggle />
+        </motion.div>
+      </motion.div>
+
       {/* Cursor follower */}
       <motion.div
-        className="fixed w-4 h-4 bg-primary/20 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className="fixed w-4 h-4 bg-primary/20 rounded-full pointer-events-none z-40 mix-blend-difference"
         animate={{
           x: mousePosition.x - 8,
           y: mousePosition.y - 8,
