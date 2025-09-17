@@ -65,6 +65,8 @@ export const useAuthStore = create<AuthState>()(
         const user = mockUsers.find(u => u.email === email);
         if (user && password === 'password') {
           set({ user, isAuthenticated: true, isLoading: false });
+          // Redirect to the app dashboard after login
+          window.location.href = '/app/dashboard';
         } else {
           set({ isLoading: false });
           throw new Error('Invalid credentials');
