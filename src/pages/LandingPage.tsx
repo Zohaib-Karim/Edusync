@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { 
   Calendar, 
   Users, 
@@ -12,11 +13,32 @@ import {
   Sparkles,
   Clock,
   Brain,
-  Zap
+  Zap,
+  Star,
+  ChevronDown,
+  Play,
+  Shield,
+  Rocket,
+  Heart,
+  Globe
 } from "lucide-react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { scrollYProgress } = useScroll();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const heroY = useTransform(smoothProgress, [0, 1], [0, -200]);
+  const featuresY = useTransform(smoothProgress, [0, 0.5, 1], [100, 0, -100]);
+
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', updateMousePosition);
+    return () => window.removeEventListener('mousemove', updateMousePosition);
+  }, []);
 
   const features = [
     {
@@ -54,13 +76,36 @@ const LandingPage = () => {
   const staggerContainer = {
     animate: {
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const floatingAnimation = {
+    animate: {
+      y: [0, -20, 0],
+      rotate: [0, 5, 0],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut"
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-hidden relative">
+      {/* Cursor follower */}
+      <motion.div
+        className="fixed w-4 h-4 bg-primary/20 rounded-full pointer-events-none z-50 mix-blend-difference"
+        animate={{
+          x: mousePosition.x - 8,
+          y: mousePosition.y - 8,
+        }}
+        transition={{ type: "spring", damping: 30, stiffness: 200 }}
+      />
+      
       {/* Animated background orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -102,24 +147,68 @@ const LandingPage = () => {
             ease: "linear"
           }}
         />
+        
+        {/* Floating particles */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/20 rounded-full"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 1, 0.2],
+              scale: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
       </div>
 
       {/* Hero Section */}
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4">
         <motion.div
-          className="text-center max-w-4xl mx-auto"
+          className="text-center max-w-5xl mx-auto"
           {...staggerContainer}
           initial="initial"
           animate="animate"
+          style={{ y: heroY }}
         >
           <motion.div {...fadeInUp} className="mb-8">
-            <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium glass">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Introducing EduSync 2.0
-            </Badge>
+            <motion.div 
+              animate={{
+                scale: [1, 1.05, 1],
+                opacity: [0.7, 1, 0.7],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <Badge variant="secondary" className="mb-6 px-6 py-3 text-base font-medium glass backdrop-blur-xl border-primary/20 hover:border-primary/40 transition-all duration-300">
+                <Sparkles className="w-5 h-5 mr-2 text-primary" />
+                Introducing EduSync 2.0
+                <Star className="w-4 h-4 ml-2 text-yellow-500" />
+              </Badge>
+            </motion.div>
           </motion.div>
 
-          <motion.h1 {...fadeInUp} className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent leading-tight">
+          <motion.h1 
+            {...fadeInUp} 
+            className="text-7xl md:text-9xl font-bold mb-8 bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent leading-tight tracking-tight"
+            whileHover={{ 
+              scale: 1.02,
+              textShadow: "0 0 20px rgba(0,0,0,0.1)" 
+            }}
+          >
             EduSync
           </motion.h1>
 
@@ -132,46 +221,76 @@ const LandingPage = () => {
             Experience the future of educational management.
           </motion.p>
 
-          <motion.div {...fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              onClick={() => navigate('/auth')}
-              className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+          <motion.div {...fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Get Started
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+              <Button
+                size="lg"
+                onClick={() => navigate('/auth')}
+                className="px-10 py-7 text-xl font-semibold bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-2xl transition-all duration-500 relative overflow-hidden group backdrop-blur-sm"
+              >
+                <span className="relative z-10 flex items-center">
+                  Get Started Free
+                  <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-accent to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  whileHover={{ scale: 1.05 }}
+                />
+              </Button>
+            </motion.div>
             
-            <Button
-              variant="outline"
-              size="lg"
-              className="px-8 py-6 text-lg font-medium glass hover:bg-background/50 transition-all duration-300"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Watch Demo
-            </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="px-10 py-7 text-xl font-medium glass hover:bg-background/60 transition-all duration-300 backdrop-blur-xl border-primary/20 hover:border-primary/40"
+              >
+                <Play className="mr-3 w-5 h-5" />
+                Watch Demo
+              </Button>
+            </motion.div>
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Enhanced scroll indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 cursor-pointer group"
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          whileHover={{ scale: 1.1 }}
         >
-          <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-muted-foreground/50 rounded-full mt-2" />
+          <div className="w-8 h-12 border-2 border-primary/40 rounded-full flex justify-center group-hover:border-primary transition-colors duration-300 backdrop-blur-sm bg-background/20">
+            <motion.div 
+              className="w-1.5 h-4 bg-primary/60 rounded-full mt-2 group-hover:bg-primary transition-colors duration-300"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
           </div>
+          <motion.div 
+            className="mt-2 flex justify-center"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+          >
+            <ChevronDown className="w-5 h-5 text-primary/60 group-hover:text-primary transition-colors duration-300" />
+          </motion.div>
         </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 py-24 px-4">
+      <section className="relative z-10 py-32 px-4">
         <motion.div
           className="max-w-7xl mx-auto"
           {...staggerContainer}
           initial="initial"
           whileInView="animate"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-150px" }}
+          style={{ y: featuresY }}
         >
           <motion.div {...fadeInUp} className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -188,21 +307,30 @@ const LandingPage = () => {
                 key={feature.title}
                 {...fadeInUp}
                 whileHover={{ 
-                  scale: 1.05,
-                  rotateY: 5,
-                  transition: { duration: 0.3 }
+                  scale: 1.08,
+                  rotateY: 8,
+                  rotateX: 5,
+                  transition: { duration: 0.3, ease: "easeOut" }
                 }}
-                className="group"
+                whileTap={{ scale: 0.95 }}
+                className="group cursor-pointer"
               >
-                <Card className="h-full glass hover:shadow-xl transition-all duration-500 border-0 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-xl">
-                  <CardContent className="p-6">
-                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <feature.icon className="w-6 h-6 text-foreground" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-300">
+                <Card className="h-full glass hover:shadow-2xl transition-all duration-700 border-0 bg-gradient-to-br from-background/60 to-background/40 backdrop-blur-2xl hover:backdrop-blur-3xl overflow-hidden relative group-hover:border-primary/20">
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                  <CardContent className="p-8 relative z-10">
+                    <motion.div 
+                      className={`w-14 h-14 rounded-2xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-6 shadow-lg`}
+                      whileHover={{ rotate: 360, scale: 1.1 }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                    >
+                      <feature.icon className="w-7 h-7 text-white drop-shadow-sm" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed text-base">
                       {feature.description}
                     </p>
                   </CardContent>

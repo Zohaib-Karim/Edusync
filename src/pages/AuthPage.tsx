@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { PasswordResetForm } from '@/components/auth/PasswordResetForm';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
-import { Shield, Users, GraduationCap, BookOpen, Calendar, BarChart } from 'lucide-react';
+import { Shield, Users, GraduationCap, BookOpen, Calendar, BarChart, ArrowLeft, Home } from 'lucide-react';
 
 type AuthView = 'login' | 'register' | 'reset';
 type UserRole = 'admin' | 'faculty' | 'student' | null;
@@ -39,6 +40,7 @@ export default function AuthPage() {
   const [currentView, setCurrentView] = useState<AuthView>('login');
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const { isAuthenticated, setTheme } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTheme('system');
@@ -75,20 +77,59 @@ export default function AuthPage() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col ${backgroundClass} transition-all duration-700 ease-in-out`}>
+    <div className={`min-h-screen flex flex-col ${backgroundClass} transition-all duration-700 ease-in-out relative overflow-hidden`}>
+      {/* Floating background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/10 rounded-full"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.1, 0.5, 0.1],
+              scale: [0.5, 1.2, 0.5],
+            }}
+            transition={{
+              duration: 4 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </div>
+
       {/* Header */}
       <motion.div 
-        className="absolute top-4 right-4 z-10"
+        className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="glass hover:bg-background/60 transition-all duration-300 backdrop-blur-xl border border-border/20 hover:border-border/40"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+        </motion.div>
         <ThemeToggle />
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <div className="flex-1 flex items-center justify-center p-6 pt-20">
+        <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
           {/* Left Side - Branding & Info */}
           <motion.div 
@@ -98,61 +139,81 @@ export default function AuthPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             {/* Brand */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <motion.h1 
-                className="text-5xl lg:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent"
+                className="text-6xl lg:text-7xl font-bold bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent tracking-tight"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
+                whileHover={{ scale: 1.02 }}
               >
-                Smart Classroom
+                EduSync
               </motion.h1>
               <motion.p 
-                className="text-xl lg:text-2xl text-muted-foreground"
+                className="text-2xl lg:text-3xl text-muted-foreground font-light"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                Revolutionizing Education Through Intelligent Technology
+                Smart Scheduling. Seamless Learning.
               </motion.p>
             </div>
 
             {/* About */}
             <motion.div 
-              className="glass p-6 rounded-2xl space-y-4"
+              className="glass p-8 rounded-3xl space-y-6 backdrop-blur-2xl border border-border/20 hover:border-border/40 transition-all duration-500"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
+              whileHover={{ scale: 1.02, y: -5 }}
             >
-              <h2 className="text-2xl font-semibold mb-4">What We Offer</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
-                    <Calendar className="h-5 w-5 text-primary-foreground" />
-                  </div>
+              <h2 className="text-3xl font-bold mb-6">What We Offer</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <motion.div 
+                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-background/30 transition-all duration-300"
+                  whileHover={{ scale: 1.05, x: 5 }}
+                >
+                  <motion.div 
+                    className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                  >
+                    <Calendar className="h-6 w-6 text-primary-foreground" />
+                  </motion.div>
                   <div>
-                    <h3 className="font-medium">Smart Scheduling</h3>
-                    <p className="text-sm text-muted-foreground">AI-powered timetables</p>
+                    <h3 className="font-semibold text-lg">Smart Scheduling</h3>
+                    <p className="text-muted-foreground">AI-powered timetables</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 gradient-secondary rounded-lg flex items-center justify-center">
-                    <BookOpen className="h-5 w-5 text-secondary-foreground" />
-                  </div>
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-background/30 transition-all duration-300"
+                  whileHover={{ scale: 1.05, x: 5 }}
+                >
+                  <motion.div 
+                    className="w-12 h-12 gradient-secondary rounded-2xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                  >
+                    <BookOpen className="h-6 w-6 text-secondary-foreground" />
+                  </motion.div>
                   <div>
-                    <h3 className="font-medium">Course Management</h3>
-                    <p className="text-sm text-muted-foreground">Streamlined workflows</p>
+                    <h3 className="font-semibold text-lg">Course Management</h3>
+                    <p className="text-muted-foreground">Streamlined workflows</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 gradient-accent rounded-lg flex items-center justify-center">
-                    <BarChart className="h-5 w-5 text-accent-foreground" />
-                  </div>
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-background/30 transition-all duration-300"
+                  whileHover={{ scale: 1.05, x: 5 }}
+                >
+                  <motion.div 
+                    className="w-12 h-12 gradient-accent rounded-2xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                  >
+                    <BarChart className="h-6 w-6 text-accent-foreground" />
+                  </motion.div>
                   <div>
-                    <h3 className="font-medium">Analytics</h3>
-                    <p className="text-sm text-muted-foreground">Data-driven insights</p>
+                    <h3 className="font-semibold text-lg">Analytics</h3>
+                    <p className="text-muted-foreground">Data-driven insights</p>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
 
@@ -199,30 +260,42 @@ export default function AuthPage() {
           >
             {/* Role Selection */}
             <motion.div 
-              className="glass p-6 rounded-2xl"
+              className="glass p-8 rounded-3xl backdrop-blur-2xl border border-border/20 hover:border-border/40 transition-all duration-500"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
+              whileHover={{ scale: 1.02, y: -5 }}
             >
-              <h2 className="text-xl font-semibold mb-4 text-center">Choose Your Role</h2>
-              <div className="grid grid-cols-3 gap-3">
+              <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Choose Your Role
+              </h2>
+              <div className="grid grid-cols-3 gap-4">
                 {Object.entries(roleConfig).map(([role, config]) => (
                   <motion.button
                     key={role}
                     onClick={() => setSelectedRole(role as UserRole)}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                    className={`p-6 rounded-2xl border-2 transition-all duration-500 backdrop-blur-xl ${
                       selectedRole === role 
-                        ? `${config.gradient} border-primary shadow-elegant text-white` 
-                        : 'bg-background border-border hover:border-primary/50 hover:shadow-soft'
+                        ? `${config.gradient} border-primary/50 shadow-2xl text-white scale-105` 
+                        : 'bg-background/60 border-border/30 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl'
                     }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ 
+                      scale: selectedRole === role ? 1.05 : 1.08,
+                      rotateY: 5,
+                      transition: { duration: 0.3 }
+                    }}
+                    whileTap={{ scale: 0.92 }}
                   >
-                    <div className="flex flex-col items-center gap-2">
-                      {React.createElement(config.icon, { 
-                        className: `h-6 w-6 ${selectedRole === role ? 'text-white' : 'text-primary'}` 
-                      })}
-                      <span className={`font-medium text-sm ${selectedRole === role ? 'text-white' : 'text-foreground'}`}>
+                    <div className="flex flex-col items-center gap-3">
+                      <motion.div
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        {React.createElement(config.icon, { 
+                          className: `h-8 w-8 ${selectedRole === role ? 'text-white drop-shadow-sm' : 'text-primary'}` 
+                        })}
+                      </motion.div>
+                      <span className={`font-semibold text-sm ${selectedRole === role ? 'text-white' : 'text-foreground'}`}>
                         {config.title}
                       </span>
                     </div>
