@@ -38,16 +38,32 @@ const roleConfig = {
 
 export default function AuthPage() {
   const [currentView, setCurrentView] = useState<AuthView>('login');
-  const [selectedRole, setSelectedRole] = useState<UserRole>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { isAuthenticated, setTheme } = useAuthStore();
   const navigate = useNavigate();
+  
+  // Get role from URL params
+  const searchParams = new URLSearchParams(location.search);
+  const selectedRole = searchParams.get('role') as UserRole || null;
 
   useEffect(() => {
     setTheme('system');
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [setTheme]);
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
+  // Redirect to role selection if no role is selected
+  if (!selectedRole) {
+    return <Navigate to="/role-selection" replace />;
   }
 
   const backgroundClass = selectedRole ? roleConfig[selectedRole].gradient : 'gradient-neutral';
@@ -77,10 +93,24 @@ export default function AuthPage() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col ${backgroundClass} transition-all duration-700 ease-in-out relative overflow-hidden`}>
+    <div className="min-h-screen bg-background overflow-hidden relative">
+      {/* Cursor follower */}
+      <motion.div
+        className="fixed w-4 h-4 bg-primary/20 rounded-full pointer-events-none z-40 mix-blend-difference"
+        animate={{
+          x: mousePosition.x - 8,
+          y: mousePosition.y - 8,
+        }}
+        transition={{
+          type: "spring",
+          damping: 30,
+          stiffness: 200,
+          mass: 0.5
+        }}
+      />
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-primary/10 rounded-full"
@@ -89,14 +119,15 @@ export default function AuthPage() {
               left: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -30, 0],
-              opacity: [0.1, 0.5, 0.1],
-              scale: [0.5, 1.2, 0.5],
+              x: [0, Math.random() * 100 - 50],
+              y: [0, Math.random() * 100 - 50],
+              opacity: [0.1, 0.8, 0.1],
+              scale: [0.5, 1.5, 0.5],
             }}
             transition={{
-              duration: 4 + Math.random() * 3,
+              duration: 6 + Math.random() * 4,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: Math.random() * 3,
               ease: "easeInOut"
             }}
           />
@@ -117,18 +148,18 @@ export default function AuthPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/role-selection')}
             className="glass hover:bg-background/60 transition-all duration-300 backdrop-blur-xl border border-border/20 hover:border-border/40"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            Back to Role Selection
           </Button>
         </motion.div>
         <ThemeToggle />
       </motion.div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6 pt-20">
+      <div className="flex-1 flex items-center justify-center p-6 pt-24">
         <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           
           {/* Left Side - Branding & Info */}
@@ -258,51 +289,52 @@ export default function AuthPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            {/* Role Selection */}
-            <motion.div 
-              className="glass p-8 rounded-3xl backdrop-blur-2xl border border-border/20 hover:border-border/40 transition-all duration-500"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-            >
-              <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Choose Your Role
-              </h2>
-              <div className="grid grid-cols-3 gap-4">
-                {Object.entries(roleConfig).map(([role, config]) => (
-                  <motion.button
-                    key={role}
-                    onClick={() => setSelectedRole(role as UserRole)}
-                    className={`p-6 rounded-2xl border-2 transition-all duration-500 backdrop-blur-xl ${
-                      selectedRole === role 
-                        ? `${config.gradient} border-primary/50 shadow-2xl text-white scale-105` 
-                        : 'bg-background/60 border-border/30 hover:border-primary/40 hover:bg-background/80 hover:shadow-xl'
-                    }`}
-                    whileHover={{ 
-                      scale: selectedRole === role ? 1.05 : 1.08,
-                      rotateY: 5,
-                      transition: { duration: 0.3 }
-                    }}
-                    whileTap={{ scale: 0.92 }}
+            {/* Selected Role Display */}
+            {selectedRole && (
+              <motion.div 
+                className="glass p-8 rounded-3xl backdrop-blur-2xl border border-border/20 hover:border-border/40 transition-all duration-500"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+              >
+                <div className="text-center mb-6">
+                  <motion.div 
+                    className={`w-16 h-16 ${roleConfig[selectedRole].gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
                   >
-                    <div className="flex flex-col items-center gap-3">
+                    {React.createElement(roleConfig[selectedRole].icon, { 
+                      className: "h-8 w-8 text-white drop-shadow-sm" 
+                    })}
+                  </motion.div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    Welcome, {roleConfig[selectedRole].title}
+                  </h2>
+                  <p className="text-muted-foreground mt-2">
+                    {roleConfig[selectedRole].description}
+                  </p>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-center text-primary">What you can do:</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {roleConfig[selectedRole].features.map((feature, idx) => (
                       <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
+                        key={idx}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-background/30 hover:bg-background/50 transition-all duration-200"
                       >
-                        {React.createElement(config.icon, { 
-                          className: `h-8 w-8 ${selectedRole === role ? 'text-white drop-shadow-sm' : 'text-primary'}` 
-                        })}
+                        <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                        <span className="text-sm font-medium">{feature}</span>
                       </motion.div>
-                      <span className={`font-semibold text-sm ${selectedRole === role ? 'text-white' : 'text-foreground'}`}>
-                        {config.title}
-                      </span>
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             {/* Auth Forms */}
             <motion.div 

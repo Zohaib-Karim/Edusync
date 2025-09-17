@@ -245,7 +245,7 @@ const LandingPage = () => {
             >
               <Button
                 size="lg"
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/role-selection')}
                 className="px-10 py-7 text-xl font-semibold bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-2xl transition-all duration-500 relative overflow-hidden group backdrop-blur-sm"
               >
                 <span className="relative z-10 flex items-center">
@@ -450,7 +450,7 @@ const LandingPage = () => {
             >
               <Button
                 size="lg"
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/role-selection')}
                 className="px-12 py-8 text-xl font-medium bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-2xl transition-all duration-500 relative overflow-hidden group"
               >
                 <span className="relative z-10 flex items-center">

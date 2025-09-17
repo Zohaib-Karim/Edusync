@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { Layout } from "@/components/layout/Layout";
 import AuthPage from "@/pages/AuthPage";
+import { RoleSelectionPage } from "@/pages/RoleSelectionPage";
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ const App = () => (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/role-selection" element={<RoleSelectionPage />} />
           <Route path="/auth" element={<AuthPage />} />
           
           {/* Protected Routes */}
