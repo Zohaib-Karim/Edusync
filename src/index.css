@@ -58,6 +58,12 @@ All colors MUST be HSL.
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
     --gradient-background: linear-gradient(180deg, hsl(var(--background)), hsl(220 14% 96%));
+    
+    /* Role-based backgrounds */
+    --gradient-admin: linear-gradient(135deg, hsl(217.2 91.2% 59.8%) 0%, hsl(220 14% 96%) 50%, hsl(217.2 91.2% 75%) 100%);
+    --gradient-faculty: linear-gradient(135deg, hsl(217.2 91.2% 59.8%) 0%, hsl(262.1 83.3% 75%) 50%, hsl(217.2 91.2% 85%) 100%);
+    --gradient-student: linear-gradient(135deg, hsl(142.1 76.2% 55%) 0%, hsl(38 92% 70%) 30%, hsl(262.1 83.3% 75%) 70%, hsl(217.2 91.2% 75%) 100%);
+    --gradient-neutral: linear-gradient(135deg, hsl(220 14% 96%) 0%, hsl(220 14% 93%) 100%);
 
     /* Shadows */
     --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
@@ -125,6 +131,12 @@ All colors MUST be HSL.
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
     --gradient-background: linear-gradient(180deg, hsl(var(--background)), hsl(217.2 32.6% 12%));
+    
+    /* Dark role-based backgrounds */
+    --gradient-admin: linear-gradient(135deg, hsl(217.2 32.6% 17.5%) 0%, hsl(217.2 32.6% 12%) 50%, hsl(217.2 32.6% 20%) 100%);
+    --gradient-faculty: linear-gradient(135deg, hsl(217.2 32.6% 17.5%) 0%, hsl(262.1 32.6% 20%) 50%, hsl(217.2 32.6% 15%) 100%);
+    --gradient-student: linear-gradient(135deg, hsl(142.1 32.6% 20%) 0%, hsl(38 32.6% 25%) 30%, hsl(262.1 32.6% 20%) 70%, hsl(217.2 32.6% 17.5%) 100%);
+    --gradient-neutral: linear-gradient(135deg, hsl(217.2 32.6% 17.5%) 0%, hsl(217.2 32.6% 12%) 100%);
 
     /* Dark shadows */
     --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.5);
@@ -214,6 +226,23 @@ All colors MUST be HSL.
     backdrop-filter: blur(10px);
     background: hsl(var(--background) / 0.8);
     border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Role-based gradients */
+  .gradient-admin {
+    background: var(--gradient-admin);
+  }
+
+  .gradient-faculty {
+    background: var(--gradient-faculty);
+  }
+
+  .gradient-student {
+    background: var(--gradient-student);
+  }
+
+  .gradient-neutral {
+    background: var(--gradient-neutral);
   }
 
   /* Hover scale effect */
