@@ -7,9 +7,12 @@ import { Header } from './Header';
 import { useAuthStore } from '@/store/authStore';
 
 export function Layout() {
-  const { theme } = useAuthStore();
+  const { theme, checkSession } = useAuthStore();
 
   useEffect(() => {
+    // Check session on component mount
+    checkSession();
+    
     // Apply theme on mount
     if (theme === 'system') {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -17,7 +20,7 @@ export function Layout() {
     } else {
       document.documentElement.classList.toggle('dark', theme === 'dark');
     }
-  }, [theme]);
+  }, [theme, checkSession]);
 
   return (
     <SidebarProvider defaultOpen>

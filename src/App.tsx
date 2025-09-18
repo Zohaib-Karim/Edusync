@@ -9,6 +9,7 @@ import AuthPage from "@/pages/AuthPage";
 import { RoleSelectionPage } from "@/pages/RoleSelectionPage";
 import LandingPage from "@/pages/LandingPage";
 import Dashboard from "@/pages/Dashboard";
+import Settings from "@/pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,7 +53,7 @@ const App = () => (
             <Route path="analytics" element={<PlaceholderPage title="Analytics Dashboard" />} />
             <Route path="map" element={<PlaceholderPage title="Campus Map" />} />
             <Route path="notifications" element={<PlaceholderPage title="Notifications" />} />
-            <Route path="settings" element={<PlaceholderPage title="Settings" />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           {/* Catch-all route */}

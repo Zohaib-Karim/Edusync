@@ -7,11 +7,13 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   theme: 'light' | 'dark' | 'system';
+  sessionId: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   verify2FA: (code: string) => Promise<boolean>;
+  checkSession: () => void;
 }
 
 // Mock users for demonstration
@@ -55,6 +57,26 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       theme: 'system',
+      sessionId: null,
+
+      checkSession: () => {
+        const currentSessionId = sessionStorage.getItem('edusync-session');
+        const storedSessionId = get().sessionId;
+        
+        // If no session ID in sessionStorage but we have one in persisted state,
+        // it means the browser was refreshed - auto logout
+        if (!currentSessionId && storedSessionId) {
+          get().logout();
+          return;
+        }
+        
+        // If we have a user but no session ID, create one
+        if (get().isAuthenticated && !currentSessionId) {
+          const newSessionId = Date.now().toString();
+          sessionStorage.setItem('edusync-session', newSessionId);
+          set({ sessionId: newSessionId });
+        }
+      },
 
       login: async (email: string, password: string) => {
         set({ isLoading: true });
@@ -64,7 +86,9 @@ export const useAuthStore = create<AuthState>()(
         
         const user = mockUsers.find(u => u.email === email);
         if (user && password === 'password') {
-          set({ user, isAuthenticated: true, isLoading: false });
+          const sessionId = Date.now().toString();
+          sessionStorage.setItem('edusync-session', sessionId);
+          set({ user, isAuthenticated: true, isLoading: false, sessionId });
           // Redirect to the app dashboard after login
           window.location.href = '/app/dashboard';
         } else {
@@ -74,7 +98,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, isAuthenticated: false, sessionId: null });
+        // Clear all storage and redirect to role selection
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/role-selection';
       },
 
       setUser: (user: User) => {
@@ -104,6 +132,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
         theme: state.theme,
+        sessionId: state.sessionId,
       }),
     }
   )

@@ -212,7 +212,7 @@ const LandingPage = () => {
             >
               <Badge variant="secondary" className="mb-6 px-6 py-3 text-base font-medium text-foreground dark:text-white glass backdrop-blur-xl border-primary/20 hover:border-primary/40 transition-all duration-300">
                 <Sparkles className="w-5 h-5 mr-2 text-primary" />
-                Introducing EduSync 2.0
+                Introducing Edusync
                 <Star className="w-4 h-4 ml-2 text-yellow-500" />
               </Badge>
             </motion.div>
